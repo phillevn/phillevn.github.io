@@ -53,14 +53,62 @@
 <p class="margin1" style="color: red;">Some work I have done in this field</p>
 
 <ol class="margin2" style="color: red;">
+ 
     <li>Continuity of Care for Patients with Obesity-Associated Chronic Conditions: Protocol for a Multisite
-        Retrospective Cohort Study, JMIR Res Protoc 2020;9(9):e20788</li>
+        Retrospective Cohort Study, JMIR Res Protoc 2020;9(9):e20788 
+        <a id="toggleButton1" style="color: blue;" onclick="toggleText('toggleButton1',text1, 'textArea1');" href="javascript:void(0);">See abstract</a>
+        <div>
+            <p id="textArea1"><!-- This is where I want to additional text--></p>
+        </div>
+    </li>
+
     <li>Disparities of geography, economy, education, and uninsured rate on COVID19 cases and deaths in
-        Mississippi (first author, submitted)</li>
+        Mississippi (first author, submitted)
+        <a id="toggleButton2" style="color: blue;" onclick="toggleText('toggleButton2',text2, 'textArea2');" href="javascript:void(0);">See abstract</a>
+        <div>
+            <p id="textArea2"><!-- This is where I want to additional text--></p>
+        </div>
+    </li>
     <li>Effect of disparities on continuity and healthcare utilization among patients with obesity-associated
         chronic conditions (OCC) and the subgroup with diabetes (OCC+T2D) (first author, in progress)</li>    
 </ol>
 
 </p>
+
+<script>
+
+
+var text1= '<p style="color: blue"> Abstract:</p>' +
+'<p style="color: blue"> Background: Obesity affects nearly half of U.S. adults and is contributing substantially to an epidemic of obesity-associated chronic conditions (OCC) such as type 2 diabetes (T2D), hypertension, and arthritis. The OCC epidemic is particularly severe in low-income, medically underserved, predominantly African American areas in the southern U.S. “obesity belt”. Little is known regarding the impact of geographic, income, and racial disparities in continuity on major health outcomes for patients with OCC. </p>'+
+'<p style="color: blue"> Objectives: To assess among patents with OCC and the subgroup with T2D: (1) whether continuity of care is associated with lower overall and potentially preventable emergency department (ED) and hospital utilization, (2) the effect of geographic, income, and racial disparities on continuity and healthcare utilizations (3) whether continuity particularly protects individuals at risk for disparities from adverse health outcomes, and (4) whether the characteristics of health systems  are associated with higher continuity and better outcomes. </p>' +
+'<p style="color: blue"> Methods: Using 2015-2018 data from four practice-based research networks (PBRN) participating in the Southern Obesity and Diabetes Coalition, we will conduct a retrospective cohort analysis and distributed meta-analysis. OCC patients and the T2D subgroup will be assessed within each health system following a standardized study protocol. The protocol manuscript was prepared in accordance with cohort studies checklist set by the STROBE (strengthening the reporting of observational studies in epidemiology) version 4. The primary study outcomes are overall and preventable ED visits and hospitalizations. Continuity of care will be calculated at the facility level using a modified version of the Bice-Boxerman Continuity of Care Index. Race will be assessed using EMR data. Residence in a low-income area or a health professional shortage area (HPSA) respectively will be assessed by linking patient residence ZIP Codes to the CMS database.    </p>'+
+'<p style="color: blue"> Results: Four regional health systems across Tennessee, Mississippi, Louisiana, and Arkansas including a total of 53 adult hospitals participated in the study. A total of 147,889 OCC patients were identified in these health systems who met full study criteria, of which 45,453 patients met criteria for inclusion in the T2D subgroup. Results are expected by the end of 2020. </p>' +
+'<p style="color: blue"> Conclusion: This study should reveal whether health system efforts to increase continuity of care for patients with obesity and diabetes have potential to improve outcomes and reduce costs. Analyzing disparities in continuity of care and their effect on major health outcomes can help demonstrate how to improve care and use of healthcare resources for vulnerable patients with OCC and subgroup patients with T2D. The study will help generate hypotheses regarding the health system characteristics associated with highest continuity and best outcomes. Better understanding of the association between continuity and healthcare utilization for these vulnerable populations will contribute to the development of higher-value health systems in the Southern U.S."</p>'
+;
+
+var text2= '<p style="color: blue"> Abstract:</p>' +
+'<p style="color: blue"> Background: As of 30 August 2020, the U.S. has been struggling with a large number of new cases daily of pandemic COVID19 since the first confirmed cases in February. Many Northern states had so many confirmed cases due to their population density and commuting in major cities. As a result, many people died because of COVID19 in those states. Mississippi, a state in the South of the United States with low population density as well as low travelers, has become one of the most states with the highest numbers of confirmed cases and confirmed deaths. Comparing to its neighbors, Mississippi had a significantly higher in both numbers of cases and deaths than others. Why was Mississippi so different from others that were almost similar in every factor?</p>'+
+'<p style="color: blue"> Methods: In this COVID19 study, we used the data of numbers of cases and deaths daily from March 10 to August 10 in Mississippi to study geographic, economic, education, and uninsured rate effects on the increase of confirmed cases and deaths in Mississippi. The outcomes are the numbers of COVID cases and deaths calculated with the geography of counties, income, education, population density, unemployment rate, and uninsured rate of adults living under the 400% poverty level. We applied a Bayesian spatial-temporal regression method to find out which factors significantly affected the cases and deaths in Mississippi.</p>'+
+'<p style="color: blue"> Results: In Mississippi, we found that besides counties having more people would have more COVID19 cases, Black people and uninsured people had a much higher risk of getting COVID19 than White people and insured people. Moreover, for each county, uninsured people were more vulnerable to deaths because of COVID10 than others, added the fact that more infected cases would drive more deaths.</p>' +
+'<p style="color: blue"> Conclusion: Mississippi had a significantly larger number of cases and deaths per one million population than its neighbors because of its high percentage of Black people and uninsured rate."</p>'
+;
+
+
+var status = "less"
+
+function toggleText(toggleButton,text, textArea)
+{  
+    if (status == "less") {
+        document.getElementById(textArea).innerHTML=text;
+        document.getElementById(toggleButton).innerText = "See Less";
+        status = "more";
+    } else if (status == "more") {
+        document.getElementById(textArea).innerHTML = "";
+        document.getElementById(toggleButton).innerText = "See abstract";
+        status = "less"
+    }
+}
+</script>
+
 </body>
 </html>
