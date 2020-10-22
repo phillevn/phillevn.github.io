@@ -63,7 +63,7 @@
  
     <li>Continuity of Care for Patients with Obesity-Associated Chronic Conditions: Protocol for a Multisite
         Retrospective Cohort Study, JMIR Res Protoc 2020;9(9):e20788 
-        <a id="toggleButton1" style="color: blue;" onclick="toggleText('toggleButton1',text1, 'textArea1');" href="javascript:void(0);">See abstract</a>
+        <a id="toggleButton1" style="color: blue;" onclick="toggleText1('toggleButton1',text1, 'textArea1');" href="javascript:void(0);">See abstract</a>
         <div>
             <p id="textArea1"><!-- This is where I want to additional text--></p>
         </div>
@@ -71,7 +71,7 @@
 
     <li>Disparities of geography, economy, education, and uninsured rate on COVID19 cases and deaths in
         Mississippi (first author, submitted)
-        <a id="toggleButton2" style="color: blue;" onclick="toggleText('toggleButton2',text2, 'textArea2');" href="javascript:void(0);">See abstract</a>
+        <a id="toggleButton2" style="color: blue;" onclick="toggleText2('toggleButton2',text2, 'textArea2');" href="javascript:void(0);">See abstract</a>
         <div>
             <p id="textArea2"><!-- This is where I want to additional text--></p>
         </div>
@@ -101,18 +101,33 @@ var text2= '<p style="color: blue"> Abstract:</p>' +
 ;
 
 
-var status = "less"
+var status1 = "less"
 
-function toggleText(toggleButton,text, textArea)
+function toggleText1(toggleButton,text, textArea, check)
 {  
-    if (status == "less") {
+    if (status1 == "less") {
         document.getElementById(textArea).innerHTML=text;
         document.getElementById(toggleButton).innerText = "See Less";
-        status = "more";
-    } else if (status == "more") {
+        status1 = "more";
+    } else if (status1 == "more") {
         document.getElementById(textArea).innerHTML = "";
         document.getElementById(toggleButton).innerText = "See abstract";
-        status = "less"
+        status1 = "less"
+    }
+}
+
+
+var status2 = "less"
+function toggleText2(toggleButton,text, textArea, check)
+{  
+    if (status2 == "less") {
+        document.getElementById(textArea).innerHTML=text;
+        document.getElementById(toggleButton).innerText = "See Less";
+        status2 = "more";
+    } else if (status2 == "more") {
+        document.getElementById(textArea).innerHTML = "";
+        document.getElementById(toggleButton).innerText = "See abstract";
+        status2 = "less"
     }
 }
 </script>
