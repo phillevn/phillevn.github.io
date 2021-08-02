@@ -1,0 +1,307 @@
+---
+title: "Diffirential Transcript Usage analysis following Salmon quantification"
+author: "Phi Le"
+output:
+  html_document:
+    df_print: paged
+---
+
+# DTU analysis
+
+## First, if you have not installed rnaseqDTU, tximport, you can install it from BiocManager::install 
+
++ tximport is a package for Quantification and data import, it can produce gene count/normalized matrix from "salmon", "sailfish", "alevin", "kallisto", "rsem", "stringtie" methods
+
++ rnaseqDTU is the Diffirential Transcript Usage analysis developed by [@love2018swimming]
+
+```{r, include=FALSE}
+
+library(rnaseqDTU)
+library(tximport)
+library(tidyverse)
+```
+
+## Now we are going to load some data fram samples and their corresponding quantification files.
+
+Since our files are stored in my test folder, we set test folder as a working directory. The sample id is needed for our work later. Sample id could be any thing you want but it must be consistent with.
+
+The files object is where all of the transcripts/gene quantification files you want to do analysis. In our example, each file is stored in a different folder with names that are given in library from sample file.
+
+In this example, we are working on a model with conditions only, i.e.  without accounting for the batch effect which is the library layout. For model with batch effect, it is similar but the design is different where we add batch effect into the model
+
+Note: If you want to do a two-stage model [@van2017general](that leverages the increased power of aggregated hypothesis tests while maintaining high biological resolution by post-hoc analysis of genes passing the screening hypothesis) in which the first one is DTU and StageR after that, your model must have exactly 2 conditions, for example, normal vs. wild type only. We will discuss later one we do StageR after DTU analysis.
+
+Let us consider a synthesis data with 20 samples that have 2 conditions 1 vs. 2.
+
+```{r}
+# csv.dir <- system.file("extdata", package="rnaseqDTU")
+###LOAD SAMPLES####
+# setwd('test')
+samples <- read.table("C:/Users/phill/Documents/Studies and Research/Project with Kurt/src_speed_814/test/targets.txt", header=TRUE)
+samples <- samples %>% dplyr::rename(sample_id = library)
+samples$group <- factor(c(rep(1, 5), rep(2,5), rep(1,5), rep(2,5)))
+# samples <- samples %>% dplyr::rename(condition = group)
+# samples$sample_id = paste("X", c(1:20))
+files <- file.path("C:/Users/phill/Documents/Studies and Research/Project with Kurt/src_speed_814/test/data", samples$sample_id, "quant.sf")
+files
+
+freq_sample = table(samples$group) # for counting number of sample size
+
+```
++ It is a good idea to check if all sample files exist by the following code
+
+```{r}
+all(file.exists(files)==TRUE)
+```
+## Transcript-to-gene mapping
+
++ If you don't have the mapping, then you may need to do the mapping from scratch by using following way to create a transcript-gene-mapping
+
+```{r, echo=TRUE}
+# library(GenomicFeatures)
+# gtf <- "gencode.v28.annotation.gtf.gz"
+# txdb.filename <- "gencode.v28.annotation.sqlite"
+# txdb <- makeTxDbFromGFF(gtf)
+# saveDb(txdb, txdb.filename)
+```
+
++ If you already have the mapping file, we can load it as below: k is the list of transcripts named TXNAME and extract mapping gene-transcript corresponding to the list of transcripts
+
+```{r, cache=TRUE}
+# samps <- read.csv(file.path(csv.dir, "samples.csv"))
+# samps
+TxDb <- AnnotationDbi::loadDb("test/new_TxDB.txt")
+k <- keys(TxDb, keytype = "TXNAME")
+txdf <- AnnotationDbi::select(TxDb, k, "GENEID", "TXNAME")
+
+txi <- tximport(files, type="salmon", tx2gene=txdf, txOut=TRUE,
+                countsFromAbundance="scaledTPM")
+```
+
+## Next, we extract counts from tximport, we only consider transcripts having none zeros rowsum
+
+```{r}
+cts <- txi$counts
+cts <- cts[rowSums(cts) > 0,]
+```
+
+## We can check the range of normalized counts
+
+```{r}
+range(colSums(cts)/1e6)
+```
+
+## Sometimes, there may be a problem with your data, you may not have transcript names in your count is a subset of names from TXNAME, to exclude them, we just take the common names from both and filter the count matrix to have only the common transcript names
+```{r}
+ints <- intersect(rownames(cts), txdf$TXNAME)
+cts <- cts[ints,] # select only common transcript names
+```
+
++ We need to filter the transcript data frame to the common names only, here we make sure the sample id have the same id to column names of count data frame
+```{r}
+
+txdf <- txdf %>% filter(TXNAME %in% ints)
+
+counts <- data.frame(gene_id=txdf$GENEID,
+                     feature_id=txdf$TXNAME,
+                     cts)
+names(counts)[3:length(names(counts))] <- samples$sample_id # rename the sample id from counts if needed
+```
+
+
++ Check that the sample id are the same
+```{r}
+colnames(counts)
+```
+
+## We can now load the DRIMSeq package and create a dmDSdata object, with our counts and samps data.frames. Typing in the object name and pressing return will give information about the number of genes:
+
+```{r}
+library(DRIMSeq)
+d <- dmDSdata(counts=counts, samples=samples)
+d
+```
++ The dmDSdata object has a number of specific methods. Note that the rows of the object are gene-oriented, so pulling out the first row corresponds to all of the transcripts of the first gene:
+
+```{r}
+methods(class=class(d))
+```
+
++ We can examine the normalized count for each gene and transcript
+
+
+```{r}
+head(counts(d), 3)
+```
+## We can also make a data summary plot, which is a histogram of the number of transcripts
+per gene.
+
+```{r}
+plotData(d)
+
+```
+## Genes may have many transcripts that are lowly expressed or not expressed at all. You can
+remove them using the dmFilter function. Filtering of lowly expressed transcripts can be
+done at two levels: minimal expression using min_samps_feature_expr and min_feature_expr
+parameters or minimal proportion with min_samps_feature_prop and min_feature_prop. According to [@love2018swimming]:
+
++ It will be useful to first filter the object, before running procedures to estimate model parameters. This greatly speeds up the fitting and removes transcripts that may be troublesome for parameter estimation, e.g. estimating the proportion of expression among the transcripts of a gene when the total count is very low. We first define n to be the total number of samples, and n.small to be the sample size of the smallest group. We use all three of the possible filters: for a transcript to be retained in the dataset, we require that (1) it has a count of at least 10 in at least n.small samples, (2) it has a relative abundance proportion of at least 0.1 in at least n.small samples, and (3) the total count of the corresponding gene is at least 10 in all n samples. We used all three possible filters, whereas only the two count filters are used in the DRIMSeq vignette example code.
+
++ It is important to consider what types of transcripts may be removed by the filters, and potentially adjust depending on the dataset. If n was large, it would make sense to allow perhaps a few samples to have very low counts, so lowering min_samps_gene_expr to some factor multiple (<1) of n, and likewise for the first two filters for n.small. The second filter means that if a transcript does not make up more than 10% of the gene’s expression for at least n.small samples, it will be removed. If this proportion seems too high, for example, if very lowly expressed isoforms are of particular interest, then the filter can be omitted or the min_feature_prop lowered. For a concrete example, if a transcript goes from a proportion of 0% in the control group to a proportion of 9% in the treatment group, this would be removed by the above 10% filter. We obtain 7320 genes and 20 samples in our data.
+
+```{r}
+n <- sum(freq_sample)
+n.small <- min(freq_sample)
+d <- dmFilter(d,
+              min_samps_feature_expr=n.small, min_feature_expr=10,
+              min_samps_feature_prop=n.small, min_feature_prop=0.1,
+              min_samps_gene_expr=n, min_gene_expr=10)
+d
+```
+
++ The dmDSdata object only contains genes that have more than one isoform, which makes sense as we are testing for differential transcript usage. We can find out how many of the remaining genes have N isoforms by tabulating the number of times we see a gene ID, then tabulating the output again:
+
+```{r}
+table(table(counts(d)$gene_id))
+```
++ We create a design matrix, using a design formula and the sample information contained in the object, accessed via samples. Here we use a simple design with just two groups, but more complex designs are possible. 
+
+```{r}
+design_full <- model.matrix(~ group, data=DRIMSeq::samples(d))
+colnames(design_full)
+```
++ We then use the following three functions to estimate the model parameters and test for DTU. We first estimate the precision, which is related to the dispersion in the Dirichlet Multinomial model via the formula below. Because precision is in the denominator of the right hand side of the equation, they are inversely related. Higher dispersion – counts more variable around their expected value – is associated with lower precision. For full details about the DRIMSeq model, one should read both the detailed software vignette and the publication (Nowicka and Robinson 2016). After estimating the precision, we fit regression coefficients and perform null hypothesis testing on the coefficient of interest. Because we have a simple two-group model, we test the coefficient associated with the difference between condition 2 and condition 1, called condition2. 
+
+
+- For this note, we only run on a small sample size to save time
+
+```{r}
+d <- d[1:350,] 
+7764 / 250
+```
+
+```{r, cache=TRUE}
+set.seed(1)
+system.time({
+  d <- dmPrecision(d, design=design_full)
+  d <- dmFit(d, design=design_full)
+  d <- dmTest(d, coef="group2")
+})
+```
++ To build a results table, we run the results function. We can generate a single p-value per gene, which tests whether there is any differential transcript usage within the gene, or a single p-value per transcript, which tests whether the proportions for this transcript changed within the gene:
+
+```{r}
+res <- DRIMSeq::results(d)
+head(res)
+```
+```{r}
+res.txp <- DRIMSeq::results(d, level="feature")
+head(res.txp)
+```
+
+
++ Because the pvalue column may contain NA values, we use the following function to turn these into 1’s. The NA values would otherwise cause problems for the stage-wise analysis. From investigating these NA p-value cases for DRIMSeq, they all occur when one condition group has all zero counts for a transcript, but sufficient counts from the other condition group, and sufficient counts for the gene. DRIMSeq will not estimate a precision for such a gene. These all happen to be true positive genes for DTU in the simulation, where the isoform switch is total or nearly total.
+
+```{r}
+no.na <- function(x) ifelse(is.na(x), 1, x)
+res$pvalue <- no.na(res$pvalue)
+res.txp$pvalue <- no.na(res.txp$pvalue)
+```
+
+```{r}
+idx <- which(res$adj_pvalue < 0.05)[1]
+res[idx,]
+```
++ We can plot the estimated proportions for one of the significant genes, where we can see evidence of switching \@ref{fig:genetransfig}
+
+```{r genetransfig}
+plotProportions(d, res$gene_id[idx], "group")
+```
+# stageR following DRIMSeq
+
+```{r}
+# data(drim_tables)
+pScreen <- res$pvalue
+strp <- function(x) substr(x,1,15)
+names(pScreen) <- strp(res$gene_id)
+head(pScreen)
+```
+
+```{r}
+pConfirmation <- matrix(res.txp$pvalue, ncol=1)
+rownames(pConfirmation) <- strp(res.txp$feature_id)
+# colnames(pConfirmation) <- c("transcript")
+sum(is.na(pConfirmation))
+head(pConfirmation)
+```
+```{r}
+tx2gene <- res.txp[,c("feature_id", "gene_id")] #%>% group_by(gene_id) %>% tally() filter(n(feature_id) ==1)
+for (i in 1:2) tx2gene[,i] <- strp(tx2gene[,i])
+head(tx2gene)
+```
+```{r}
+# tx2gene <- tx2gene %>% group_by(gene_id) %>% mutate(n=n()) %>% filter(n > 1) %>% dplyr::select(-n) %>% ungroup() %>% as_data_frame()
+# 
+# 
+# pConfirmation <- pConfirmation[tx2gene$feature_id,]
+# 
+# pScreen = pScreen[intersect(tx2gene$gene_id, names(pScreen))]
+```
+
+```{r}
+all(names(pScreen) %in% tx2gene$gene_id)
+```
+```{r}
+all(names(pConfirmation) %in% tx2gene$feature_id)
+```
+
+```{r}
+library(stageR)
+stageRObj <- stageRTx(pScreen=pScreen, pConfirmation=pConfirmation,
+                      pScreenAdjusted=FALSE, tx2gene=tx2gene)
+
+stageRObj <- stageWiseAdjustment(stageRObj, method="dtu", alpha=0.2)
+
+suppressWarnings({
+  drim.padj <- getAdjustedPValues(stageRObj, order=FALSE,
+                                  onlySignificantGenes=TRUE)
+})
+head(drim.padj)
+```
+```{r}
+data(drim_tables)
+nrow(res)
+```
+
+```{r}
+nrow(res.txp)
+```
+
+```{r}
+pScreen <- res$pvalue
+strp <- function(x) substr(x,1,15)
+names(pScreen) <- strp(res$gene_id)
+```
+```{r}
+pConfirmation <- matrix(res.txp$pvalue, ncol=1)
+rownames(pConfirmation) <- strp(res.txp$feature_id)
+```
+
+```{r}
+tx2gene <- res.txp[,c("feature_id", "gene_id")]
+for (i in 1:2) tx2gene[,i] <- strp(tx2gene[,i])
+```
+```{r}
+stageRObj <- stageRTx(pScreen=pScreen, pConfirmation=pConfirmation,
+                      pScreenAdjusted=FALSE, tx2gene=tx2gene)
+stageRObj <- stageWiseAdjustment(stageRObj, method="dtu", alpha=0.05)
+suppressWarnings({
+  drim.padj <- getAdjustedPValues(stageRObj, order=FALSE,
+                                  onlySignificantGenes=TRUE)
+})
+head(drim.padj)
+```
+```{r}
+sessionInfo()
+```
+
