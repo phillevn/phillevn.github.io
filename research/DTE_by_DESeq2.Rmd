@@ -1,0 +1,207 @@
+---
+title: "DTE_by_DESeq2"
+author: "Phi Le"
+date: "8/6/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+
+library(GenomicFeatures)
+
+library(stageR)
+library(tidyverse)
+```
+# Load the library 
+
+```{r}
+library(data.table)
+library(tximport)
+library(DESeq2)
+library(apeglm)
+library(ggplot2)
+library(ggrepel)
+library(EnhancedVolcano)
+```
+```{r}
+
+
+samples <- read.table("C:/Users/phill/Documents/Studies and Research/Project with Kurt/src_speed_814/test/targets.txt", header=TRUE)
+samples <- samples %>% dplyr::rename(sample_id = library) %>% filter(group %in% c("HFD_OX", "NMD_OX")) %>% mutate(group = factor(group), sample_id = factor(sample_id))
+
+files <- file.path("C:/Users/phill/Documents/Studies and Research/Project with Kurt/src_speed_814/test/data", samples$sample_id, "quant.sf")
+files
+
+freq_sample = table(samples$group) # for counting number of sample size
+
+TxDb <- AnnotationDbi::loadDb("test/new_TxDB.txt")
+k <- keys(TxDb, keytype = "TXNAME")
+txdf <- AnnotationDbi::select(TxDb, k, "GENEID", "TXNAME")
+
+# txi <- tximport(files, type="salmon", tx2gene=txdf, txOut=TRUE,
+                # countsFromAbundance="scaledTPM")
+
+txi = tximport(files, type = "salmon", 
+txIn = TRUE, txOut = TRUE, countsFromAbundance = "no")
+```
+```{r}
+class(txi)
+```
+
+```{r}
+names(txi)
+```
+
+```{r}
+dds = DESeqDataSetFromTximport(txi, 
+colData = samples, ~ group)
+```
+```{r}
+dds
+```
+
+```{r}
+dds = DESeq(dds)
+```
+```{r}
+cbind(resultsNames(dds))
+```
+```{r}
+res <- results(dds, name = resultsNames(dds)[2], alpha = 0.05)
+```
+```{r}
+summary(res)
+```
+```{r}
+mcols(res)$description
+```
+```{r}
+ head(res)
+```
+```{r}
+resultsNames(dds)
+```
+
+
+# MA plot of schrink change
+
+```{r}
+resLFC = lfcShrink(dds, coef = resultsNames(dds)[2], 
+type="normal")
+
+png("DTE_MA-plot_schrink.Salmon.png", width=7, height=5, units = "in", res = 300)
+DESeq2::plotMA(resLFC, alpha = 0.05, ylim=c(-6,6), 
+main = "MA-plot for the shrunken log2 fold changes")
+dev.off()
+```
+# MA plot of results
+
+```{r}
+# res <- results(dds, name = "group_HFD_OX_vs_ETB_KO_HFD", p=0.05)
+png("DTE_MA-plot.Salmon.png", width=7, height=5, units = "in", res = 300)
+DESeq2::plotMA(res,
+main = "MA-plot for the result log2 fold changes")
+dev.off()
+```
+
+#Principal component plot of the samples
+
+```{r}
+rld = rlog(dds)
+vsd = vst(dds)
+```
+
+```{r}
+# rlog
+pcaData = plotPCA(rld, intgroup=c("group"), 
+returnData=TRUE)
+percentVar = round(100 * attr(pcaData, "percentVar"))
+
+png("DTE_PCA-rlog.Salmon.png", width=7, height=7, units = "in", res = 300)
+ggplot(pcaData, aes(PC1, PC2, colour = group)) + 
+geom_point(size = 2) + theme_bw() + 
+scale_color_manual(values = c("blue", "red")) +
+geom_text_repel(aes(label = group), nudge_x = -1, nudge_y = 0.2, size = 3) +
+ggtitle("Principal Component Analysis (PCA)", subtitle = "rlog transformation") +
+xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+ylab(paste0("PC2: ",percentVar[2],"% variance"))
+dev.off()
+```
+
+```{r}
+# vst
+pcaData = plotPCA(vsd, intgroup=c("group"), 
+returnData=TRUE)
+percentVar = round(100 * attr(pcaData, "percentVar"))
+
+png("DTE_PCA-vst.Salmon.png", width=7, height=7, units = "in", res = 300)
+ggplot(pcaData, aes(PC1, PC2, colour = group)) + 
+geom_point(size = 2) +theme_bw() + scale_color_manual(values = c("blue", "red")) +
+geom_text_repel(aes(label = group), nudge_x = -1, nudge_y = 0.2, size = 3) +
+ggtitle("Principal Component Analysis (PCA)", subtitle = "vst transformation") +
+xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+ylab(paste0("PC2: ",percentVar[2],"% variance"))
+dev.off()
+```
+
+# Volcano plot
+
+```{r}
+pCutoff = 0.05
+FCcutoff = 1.0
+
+p = EnhancedVolcano(data.frame(res), lab = NA, x = 'log2FoldChange', y = 'padj',
+                    
+xlim = c(min(data.frame(res)$log2FoldChange, na.rm = TRUE) - 1.5, max(data.frame(res)$log2FoldChange, na.rm = TRUE) +
+    1.5),
+  ylim = c(0, max(-log10(data.frame(res)$padj), na.rm = TRUE) + 5),                    
+                    
+xlab = bquote(~Log[2]~ 'fold change'), ylab = bquote(~-Log[10]~adjusted~italic(P)),
+pCutoff = pCutoff, FCcutoff = FCcutoff, pointSize = 1.0, labSize = 2.0,
+title = "Volcano plot", subtitle = "group_HFD_OX_vs_ETB_KO_HFD",
+caption = paste0('log2 FC cutoff: ', FCcutoff, '; p-value cutoff: ', pCutoff, '\nTotal = ', nrow(res), ' variables'),
+legendLabels =c('NS','Log2 FC','Adjusted p-value', 'Adjusted p-value & Log2 FC'),
+legendPosition = 'bottom', legendLabSize = 14, legendIconSize = 5.0)
+
+png("DTE_VolcanoPlots.Salmon.png", width=9, height=7, units = "in", res = 300)
+print(p)
+dev.off()
+```
+
+# Exporting results with known annotations
+
+```{r}
+library(rtracklayer)
+
+annoData <- readGFF("test/gencode.vM24.annotation.gff3")
+normCounts = as.data.frame(counts(dds, normalized = TRUE))
+baseMeans = as.data.frame(sapply( levels(dds$group), 
+function(lvl) rowMeans( counts(dds, normalized = TRUE)[, dds$group == lvl, drop = FALSE] ) ))
+
+normData = merge(annoData, merge(baseMeans, normCounts, by.x = 'row.names', by.y = 'row.names'), by.x = 'transcript_id', by.y = 'Row.names')
+normData = normData[order(normData$seqid, normData$start, normData$end),]
+
+deData = data.frame(res[,c(1,2,5,6)])
+colnames(deData) = c("baseMean","log2fc","pvalue","padj")
+deData = merge(annoData, deData, by.x = 'transcript_id', by.y = 'row.names')
+deData = deData[order(deData$seqid, deData$start, deData$end),]
+
+# write.table(normData, file="DTE_DESeq2_Means_and_NormalisedCount.Salmon.txt",
+# sep = "\t", quote = F, row.names = F, col.names = T)
+# write.table(deData, file="DTE_DESeq2_DE_results.Salmon.txt", 
+# sep = "\t", quote = F, row.names = F, col.names = T)
+```
+```{r}
+annoData
+```
+
+# Show data
+
+```{r}
+normData[normData$gene_type == "TEC", 1:14]
+```
+
+
