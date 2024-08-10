@@ -1,53 +1,192 @@
 <!DOCTYPE html>
-<html>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/w3.css">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
 <body>
+    <div class="container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <img src="phi.jpg" alt="Your Picture" class="profile-pic">
+            <h2>Phi Le</h2>
+            <ul>
+                <p>Data Scientist</p>
+                <p> Biostatistician and Bioinformatician</p>
 
-
-  <div class="navbar">
-    <a href="index.html" class="w3-button w3-bar-item">Home</a>
-    <a href="cv/cv.html" class="w3-button w3-bar-item">CV</a>
-        <div class="dropdown">
-        <button class="dropbtn" onclick="myFunction()">Research
-          <i class="fa fa-caret-down"></i>
-        </button>
-        <div class="dropdown-content" id="myDropdownResearch">
-          <a href="research/mathematics.html">Mathematics</a>
-          <a href="research/biostatistics.html">Biostatistics</a>
-          <a href="research/multi_omics.html">Multi-Omics</a>
-          <a href="https://github.com/phillevn/medicalQuestionAndTags/blob/main/Tag_questions.ipynb"> Predict multi-tags for a medical question</a>
-          <a href="research/spatial_survival_genexp_report.html">Spatial Survival Analysis</a>
-          <a href="https://phillevn.shinyapps.io/rshiny_learn/">COVID19 Shorterm Predictions</a>
+                <!-- <li>Email: your-email@example.com</li>
+                <li>Phone: +123 456 7890</li> -->
+                <li>Location: Worcester, Massachusetts</li>
+            </ul>
         </div>
-        </div> 
-</div>
-<!-- Navigation 
-<nav class="w3-bar w3-black">
-  <a href="index.html" class="w3-button w3-bar-item">Home</a>
-  <a href="cv/cv_new.pdf" class="w3-button w3-bar-item">CV</a>
-  <a href="research/research.html" class="w3-button w3-bar-item">Research</a>
-  <a href="contact/contact.html" class="w3-button w3-bar-item">Contact</a>
-</nav>
--->
-<p style="font-size: 30pt; color: red; text-align: center;"> Welcome to Phi Le's homepage</p>
-<section style="im;">
-  <img src="images/phi.jpg" style="width:20%" class="center">
-</section>
 
-<p style="color: blue;" class="margin1">My full name Lê Long Phi in Vietnamese. I am from Vietnam.
-    My hobbies when I have free time are watching action movies and reading.</p>
+        <!-- Right Section -->
+        <div class="right-section">
+            <section id="about">
+                <h2>About Me</h2>
+                <p>My full name Lê Long Phi in Vietnamese. I am from Vietnam. My hobbies when I have free time are watching action movies and reading.</p>
+            </section>
 
-<p class="margin1"> 
-    I do research related to Alzheimer's disease and also to other health issues by using various statistical 
-    analysis tools from omics, differential expressions (gene level/transcript level), scRNAseq analysis, gene set enrichment and gene pathway analysis, building machine learning models by using supervised/unsupervised 
-    techniques, computer vision, and other deep learning methods. My goal is to be a part of communities that are looking for a
-    way to improve the health of human beings in general. Check my research page for my work 
-    if you are interested in.
-</p>
-<p class="margin1">
-    Check my <a href =  https://github.com/phillevn?tab=repositories>github </a> for some of my projects in biostatistics, bioinformatics, machine learning, and deep learning.
-</p>
+            <section id="education">
+
+                <h2>Education</h2>
+                <ul>
+                    <li>
+                        <p>PhD in Applied Mathematics (2016): University of Missouri - Columbia.</p>
+                    </li>
+                    <li>
+                        <p> MS in Biostatistics and Data Science (2020): University of Mississippi Medical Center</p>
+                    </li>
+                    
+                </ul>
+                
+            </section>
+
+            <section id="employment">
+
+                <h2>Employment</h2>
+                <ul>
+                    <li>
+                        <p>Data Scientist (Biostatistician, Bioinformatician, Machine Learning, Deep Learning): University of California - San Francisco: 2022-</p>
+                    </li>
+                    <li>
+                        <p>Biostatistician: University of Mississippi Medical Center: 2018-2022</p>
+                    </li>
+                    <li>
+                        <p>Mathematician: Syracuse University: 2016-2018</p>
+                    </li>                    
+                </ul>
+                
+            </section>
+
+            <section id="project">
+                <h2>Recent Projects</h2>
+                <!-- Slideshow Container -->
+                <div class="project-section">
+                    <!-- Slideshow Container -->
+                    <div class="slideshow-container">
+
+                            <img src="./image/feature_selection/method_summary.jpg" style="width:100%">
+
+                    </div>
+            
+                    <!-- Text Description -->
+                    <div class="project-description">
+                        <h2>Feature selection model applied to gene expressions</h2>
+                        <p> We developed a novel ensemble method that invokes a Group Lasso Model with a permutation-assisted (PA) technique to find the feature associated with clinical outcomes of interest. Our model got high accuracy and less irrelevant selected features through various simulation scenarios due to the PA method. When using our selected features for the prediction model, our results showed better performance and robust predictions across different prediction models.</p>
+                    </div>
+                    
+                </div>
+                <div class="project-section">
+                    <!-- Slideshow Container -->
+                    <div class="slideshow-container">
+
+                            <img src="./image/tcr_prediction/prediction_1.png" style="width:100%">
+
+                    </div>
+            
+                    <!-- Text Description -->
+                    <div class="project-description">
+                        <h2>Tcell receptor - antigen peptide recognition prediction</h2>
+                        <p> Predicting the binding of T-cell receptors (TCRs) to peptides is essential for understanding the immune system and developing new immunotherapy treatments for diseases such as cancer. To achieve this, we developed various models using Deep Learning and Graph Neural Networks to encode letter-based amino acid sequences of TCRs into numerical values, which increases data variation. Additionally, we built a Bayesian classification model to obtain a high-performance model that can check the probability of binding between TCRs and a list of antigen peptides and provide uncertainty levels of predictions.</p>
+                    </div>
+                    
+                </div>
+                <div class="project-section">
+                    <!-- Slideshow Container -->
+                    <div class="slideshow-container">
+
+                            <!-- <img src="./image/wgcna/trait_relationship.png" style="width:100%"> -->
+                            <img src="./image/wgcna/module_trait.png" style="width:100%">
+                    </div>
+            
+                    <!-- Text Description -->
+                    <div class="project-description">
+                        <h2>WGCNA</h2>
+                        <p> I utilized WGCNA and DGE analyses to identify gene modules associated with Autism Spectrum Disorder (ASD) and discern significant gene expression differences compared to individuals without ASD.</p>
+                    </div>
+                    
+                </div>
+                <div class="project-section">
+                    <!-- Slideshow Container -->
+                    <div class="slideshow-container">
+
+                            <!-- <img src="./image/wgcna/trait_relationship.png" style="width:100%"> -->
+                            <img src="./image/pembro_lu/leiden_clusters.png" style="width:100%">
+                    </div>
+            
+                    <!-- Text Description -->
+                    <div class="project-description">
+                        <h2>Single cell analysis</h2>
+                        <p> I conduct single-cell RNA-seq analysis from FASTQ files to annotate cells using marker genes. Additionally, I perform statistical analysis to examine changes in immune cells across different treatments and timepoints</p>
+                    </div>
+                    
+                </div>
+
+                <div class="project-section">
+                    <!-- Slideshow Container -->
+                    <div class="slideshow-container">
+
+                            <!-- <img src="./image/wgcna/trait_relationship.png" style="width:100%"> -->
+                            <img src="./image/CD40/network_analysis.jpg" style="width:100%">
+                    </div>
+            
+                    <!-- Text Description -->
+                    <div class="project-description">
+                        <h2>Neoadjuvant CD40 Agonism Remodels the Tumor Immune Microenvironment in Locally Advanced Esophageal/Gastroesophageal Junction Cancer </h2>
+                        <p>In this project, I contributed to analyzing B-cell receptor similarities through network analysis and performed statistical analysis across different time points and features of B cells.</p>
+                    </div>
+                    
+                </div>
+                <script src="scripts.js"></script>
+            </section>      
+
+</body> 
+                
+            </section>
+            <section id="Publications">
+
+                <h2>Publications</h2>
+                <ul>
+                    <ol class="margin2" style="color: blue;">
+                        <li>Le P, Ung L, Yang H, Huang A, He T, Zhang L. Prediction of Multi-Class Peptides by T-cell Receptor
+                            Sequences with Deep Learning. Pre-print. Forthcoming.</li> 
+                        <li>Le P, Gong X, Ung L, Yang H, Keenan B, Zhang L, He T. A robust ensemble feature selection approach to prioritize genes associated with survival outcome in high-dimensional gene expression data Front. Syst. Biol., 20 March 2024 Sec. Integrative Genetics and Genomics Volume 4 - 2024 https://doi.org/10.3389/fsysb.2024.1355595.</li> 
+                        
+                        <li>Phi Le, Josh Mann, Jeannette Simino, Fazlay Faruque, Continuity of care indices and their associations with unplanned hospital readmission within 30 days. In preparation </li> 
+                        <li>Maira Soto, Erin L. Filbert, Hai Yang, Stephanie Starzinski, Alec Starzinski, Marissa Gin, Brandon Chen, Phi Le, Tony Li, Brandon Bol, Alexander Cheung, Li Zhang, Frank J. Hsu, Andrew Ko, Lawrence Fong, Bridget P. Keenan, Neoadjuvant CD40 agonism remodels the tumor immune microenvironment in locally advanced
+                            esophageal/gastroesophageal junction cancer, to appear Cancer Research Community 2023</li> 
+                        <li>Phi Le, Joshua Mann, Satya Surbh4, Hao Mei , Yilu Lin, Lizheng Shi,
+                            Eboni G. Price-Haywood,  Jeff Burton , Sohul A Shuvo, Christopher D. Jackson, 
+                            Ming Chen, James E. Bailey. Effect of geographic and racial disparities on continuity of care and healthcare utilization among patients with obesity-associated chronic conditions. In preparation </li> 
+                        <li>Satya Surbhi, Ming Chen, Sohul A.Shuvo, Eboni Price-Haywood, Lizheng Shi, Joshua Mann, Yilu Lin, Phi L.Led, Jeffrey H.Burton, James E.Bailey. Effect of continuity of care on emergency department and hospital visits for obesity-associated chronic conditions: A federated cohort meta-analysis, , Journal of the National Medical Association, https://doi.org/10.1016/j.jnma.2022.07.001</li> 
+                        <li>Lin Y, Bailey JE, Surbhi S, Shuvo SA, Jackson CD, Chen M, Price-Haywood EG, Mann J, Fort D,
+                            Burton J, Sandlin R, Castillo A, Mei H, Smith P, Leak C, Le P, Monnette AM, Shi L. Continuity of Care
+                            for Patients with Obesity-Associated Chronic Conditions: Protocol for a Multisite Retrospective Cohort
+                            Study. JMIR Res Protoc. 2020 Sep 9;9(9):e20788. PubMed Central PMCID: PMC7511855.</li> 
+                        <li>Finsler Trudinger-Moser inequalities on $\mathbf{R}^2$, with Duy, N.T., Sci. China Math. (2021). https://doi.org/10.1007/s11425-020-1820-5</li> 
+                        <li>Cylindrical Hardy type inequalities with Bessel pairs, with Duy Nguyen, Operators and Matrices Volume 15, Number 2 (2021), 485–495 doi:10.7153/oam-2021-15-34</li> 
+                        <li>Continuity of Care for Patients with Obesity-Associated Chronic Conditions: Protocol for a Multisite
+                            Retrospective Cohort Study, with others, JMIR Res Protoc 2020;9(9):e20788, PMID: 32902394 PMCID: PMC7511855 DOI: 10.2196/20788 </li> 
+                        <li>Hardy and Caffarelli-Kohn-Nirenberg inequalities with nonradial weights, with Nguyen Tuan Duy, Nguyen Thanh Son, Electronic Journal of Differential Equations, Vol. 2020 (2020), No. 33, pp. 1–10.</li> 
+                        ISSN: 1072-6691. URL: http://ejde.math.txstate.edu or http://ejde.math.unt.edu
+                        <li>A note on the second order geometric Rellich inequality on half-space, with Duy, N.T., Lam, N., Monatsh Math 195, 233–248 (2021). https://doi.org/10.1007/s00605-020-01490-9</li>  
+                        <li>Sharp affine Trudinger-Moser inequalities: A new argument, with N Duy and N Lam, Canadian Mathematical Bulletin, 1-14, 2020, DOI: https://doi.org/10.4153/S0008439520000806</li> 
+                        <li>Quantum divergences with p-power means, with N Lam, Linear Algebra and its Applications 609, 289-307, 2020, https://doi.org/10.1016/j.laa.2020.09.009</li> 
+                        <li>Hardy Inequalities and Caffarelli-Kohn-Nirenberg inequalities with radial derivative, with Nguyen Tuan Duy, Weijia Yin , 2020 Journal of Mathematical Inequalities, Volume 14, Number 2 (2020), 501–523 , dx.doi.org/10.7153/jmi-2020-14-32</li> 
+                        <li>Sharp Trudinger-Moser inequalities with homogeneous weights, with Duy, Nguyen Tuan; Nghia, Le Trung; Electron J. Differential Equations 2019, N. 205, https://ejde.math.txstate.edu/Volumes/2019/105/duy.pdf</li> 
+                        <li>Carleson measure estimates and the Dirichlet problem for degenerate elliptic equations, with Steve Hofmann and Andrew Morris, ANALYSIS $\&$ PDE, Volume 12, No. 8, 2019, DOI: 10.2140/apde.2019.12.2095</li> 
+                        <li>BMO solvability and absolute continuity of harmonic measure, with Steve Hofmann, The Journal of Geometric Analysis, Volume 28, Issue 4, pp 3278–3299, https://doi.org/10.1007/s12220-017-9959-0</li> 
+                        <li>The weak-$A_{\infty}$ property of harmonic and p-harmonic measures implies uniform rectifiability, with Steve Hofmann, Kaj Nystrom, Jose Maria Martell, Analysis and PDEs. Vol 10. No. 3 2017, DOI: 10.2140/apde.2017.10.513</li> 
+                        <li>Nonlinear versions of Stampacchia and Lax-Milgram theorems and applications, with Duong M. Duc and Nguyen H. Loc, Nonlinear Anal. 68 (2008), no. 4, 925931, https://doi.org/10.1016/j.na.2006.11.048</li> 
+                    </ol>
+                    
+                </ul>
+                
+            </section>
+        </div>
+    </div>
 </body>
 </html>

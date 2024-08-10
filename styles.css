@@ -1,0 +1,219 @@
+/* Reset default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Container for the entire page */
+.container {
+    display: flex;
+    height: 100vh;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+/* Left section styling */
+.left-section {
+    flex: 1 1 15%;
+    background-color: #333;
+    color: #fff;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* Center content horizontally */
+    justify-content: center; /* Center content vertically */
+    text-align: center; /* Center text within each element */
+}
+
+.left-section img.profile-pic {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.left-section h2 {
+    margin-bottom: 15px;
+}
+
+.left-section ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.left-section ul li {
+    margin-bottom: 10px;
+}
+
+/* Right section styling */
+.right-section {
+    flex: 2 1 60%;
+    padding: 40px;
+    background-color: #f4f4f4;
+    overflow-y: auto;
+}
+
+.right-section section {
+    margin-bottom: 40px;
+}
+
+.right-section h2 {
+    margin-bottom: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .left-section, .right-section {
+        flex: 1 1 100%;
+    }
+}
+
+/* Container for all projects */
+.projects-container {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    padding: 20px;
+}
+
+/* Slideshow container */
+.slideshow-container {
+    max-width: 85%;
+    position: relative;
+    margin-right: 20px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.project-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    margin: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Slideshow container */
+ 
+ 
+/* .slideshow-container {
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+  } */
+  
+  /* Next & previous buttons */
+  .prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    margin-top: -22px;
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+  }
+  
+  /* Position the "next button" to the right */
+  .next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+  }
+  
+  /* On hover, add a black background color with a little bit see-through */
+  .prev:hover, .next:hover {
+    background-color: rgba(0,0,0,0.8);
+  }
+  
+  /* Caption text */
+  .text {
+    color: #f2f2f2;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    bottom:20px;
+    width: 100%;
+    text-align: center;
+  }
+  .mySlides {
+    display:none;
+  }
+  .active-slide {
+    display:block;
+  }
+  /* Number text (1/3 etc) */
+  .numbertext {
+    color: #f2f2f2;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    top: 0;
+  }
+  
+  /* The dots/bullets/indicators */
+  .dot {
+    cursor:pointer;
+    height: 13px;
+    width: 13px;
+    margin: 0 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+  }
+  
+  .active, .dot:hover {
+    background-color: #717171;
+  }
+  
+  /* Fading animation */
+  .fade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 1.5s;
+    animation-name: fade;
+    animation-duration: 1.5s;
+  }
+  
+  @-webkit-keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+  }
+  
+  @keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+  }
+.project-description {
+    max-width: 45%;
+}
+
+.project-description h2 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.project-description p {
+    font-size: 18px;
+    line-height: 1.5;
+}
+
